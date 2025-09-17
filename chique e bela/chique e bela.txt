@@ -1,0 +1,323 @@
+chique e bela
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chique e Bela</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #ffe6f0; /* rosa claro */
+    }
+    header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fff0f6; /* tom mais claro para o header */
+      padding: 2rem 1rem;
+      box-shadow: 0 2px 8px rgba(179, 0, 89, 0.2);
+    }
+    header img {
+      width: 150px; /* logo maior */
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 36px;
+      color: #b30059; /* rosa escuro */
+    }
+    header p {
+      margin: 8px 0 0;
+      color: #b30059;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .container-wrapper {
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      width: 100%;
+    }
+    .produto {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .produto:hover {
+      transform: scale(1.05);
+    }
+    .imagem-principal {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .miniaturas {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .miniatura {
+      width: 45px;
+      height: 45px;
+      object-fit: cover;
+      border-radius: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .miniatura:hover,
+    .miniatura.selecionada {
+      border-color: #b30059; /* rosa escuro */
+    }
+    .titulo {
+      margin: 0.5rem 0 0.25rem 0;
+      font-size: 1.1rem;
+      color: #b30059;
+    }
+    .preco {
+      color: #e74c3c;
+      font-weight: bold;
+      margin: 0 0 0.75rem 0;
+    }
+    button.btn-carrinho {
+      background: #b30059;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s ease;
+    }
+    button.btn-carrinho:hover {
+      background: #800040;
+    }
+    .admin-btns {
+      margin-top: 10px;
+      text-align: center;
+    }
+    .admin-btns button {
+      margin: 0 5px 5px 5px;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .btn-editar {
+      background-color: #f39c12;
+      color: white;
+    }
+    .btn-apagar {
+      background-color: #c0392b;
+      color: white;
+    }
+    .whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      z-index: 1000;
+    }
+    .whatsapp-float.right {
+      right: 20px;
+    }
+    .whatsapp-float.left {
+      left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://i.postimg.cc/525sqvZQ/logo-dani.png" alt="Chique e Bela" />
+    <h1>Chique e Bela</h1>
+    <p>Moda atual com qualidade e bom preço</p>
+  </header>
+
+  <div id="loginArea">
+    <input type="password" id="senhaInput" placeholder="Digite a senha de administrador" />
+    <button onclick="login()">Entrar</button>
+  </div>
+
+  <div style="display:none" id="adminArea">
+    <p style="text-align:center">Você está no modo administrador</p>
+  </div>
+
+  <div class="container-wrapper">
+    <div class="container" id="produtos"></div>
+  </div>
+
+  <div style="max-width: 800px; margin: 0 auto; padding: 1rem;">
+    <h2 style="text-align:center; color: #b30059;">Carrinho</h2>
+    <div id="carrinhoLista" style="background:#fff; padding:1rem; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.1);">
+      <p id="carrinhoVazio" style="text-align:center;">Seu carrinho está vazio.</p>
+    </div>
+    <div style="text-align:center; margin-top:1rem;">
+      <button onclick="limparCarrinho()" style="background:#c0392b;color:white;padding:10px 20px;border:none;border-radius:5px;font-size:1rem;cursor:pointer;">
+        Limpar Carrinho
+      </button>
+    </div>
+  </div>
+
+  <a href="https://wa.me/554198444645" class="whatsapp-float right" target="_blank" title="WhatsApp">
+    <img src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="WhatsApp" style="width:60px;" />
+  </a>
+  <a href="#" class="whatsapp-float left" target="_blank" id="botaoCarrinhoWhatsApp" title="Carrinho WhatsApp">
+    <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" alt="Carrinho WhatsApp" style="width:60px;" />
+  </a>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set, push, remove, update } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyALZ5b_18LXMEMDxNh6Cg4W2xNBCyKsTU4",
+      authDomain: "loja-dani.firebaseapp.com",
+      databaseURL: "https://loja-dani-default-rtdb.firebaseio.com",
+      projectId: "loja-dani",
+      storageBucket: "loja-dani.appspot.com",
+      messagingSenderId: "220237265878",
+      appId: "1:220237265878:web:6f2baf2bc1bebcd5418277"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const produtosRef = ref(db, 'produtos');
+
+    let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+    let modoAdmin = false;
+
+    const container = document.getElementById("produtos");
+    const carrinhoLista = document.getElementById("carrinhoLista");
+    const carrinhoVazio = document.getElementById("carrinhoVazio");
+    const botaoWhats = document.getElementById("botaoCarrinhoWhatsApp");
+
+    function atualizarLinkWhatsapp() {
+      const msg = carrinho.length === 0 ? "Olá! Meu carrinho está vazio." :
+        "Olá! Gostaria de comprar:%0A" + carrinho.map((item, i) => `${i + 1}. ${item.nome} - ${item.preco}`).join('%0A');
+      botaoWhats.href = `https://wa.me/554198444645?text=${msg}`;
+    }
+
+    function atualizarCarrinhoVisual() {
+      carrinhoLista.innerHTML = "";
+      if (carrinho.length === 0) {
+        carrinhoVazio.style.display = 'block';
+        return;
+      }
+      carrinhoVazio.style.display = 'none';
+      carrinho.forEach(item => {
+        const linha = document.createElement('div');
+        linha.style.display = 'flex';
+        linha.style.justifyContent = 'space-between';
+        linha.style.padding = '8px 0';
+        linha.style.borderBottom = '1px solid #ddd';
+        linha.innerHTML = `<span><strong>${item.nome}</strong> - ${item.preco}</span><button onclick="removerDoCarrinho('${item.id}')" style="background:#e74c3c;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;">Remover</button>`;
+        carrinhoLista.appendChild(linha);
+      });
+    }
+
+    window.adicionarAoCarrinho = (id, nome, preco) => {
+      if (carrinho.some(p => p.id === id)) return alert("Produto já no carrinho!");
+      carrinho.push({ id, nome, preco });
+      localStorage.setItem('carrinho', JSON.stringify(carrinho));
+      atualizarCarrinhoVisual();
+      atualizarLinkWhatsapp();
+    };
+
+    window.removerDoCarrinho = (id) => {
+      carrinho = carrinho.filter(p => p.id !== id);
+      localStorage.setItem('carrinho', JSON.stringify(carrinho));
+      atualizarCarrinhoVisual();
+      atualizarLinkWhatsapp();
+    };
+
+    window.limparCarrinho = () => {
+      if (!confirm("Deseja limpar o carrinho?")) return;
+      carrinho = [];
+      localStorage.removeItem('carrinho');
+      atualizarCarrinhoVisual();
+      atualizarLinkWhatsapp();
+    };
+
+    window.login = () => {
+      const senha = document.getElementById("senhaInput").value.trim().toLowerCase();
+      if (senha === "crochê" || senha === "croche") {
+        modoAdmin = true;
+        document.getElementById("adminArea").style.display = "block";
+        carregarProdutos(produtosCache);
+      } else {
+        alert("Senha incorreta.");
+      }
+    };
+
+    let produtosCache = null;
+
+    function carregarProdutos(produtos) {
+      produtosCache = produtos;
+      container.innerHTML = "";
+      if (!produtos) return;
+      Object.entries(produtos).forEach(([id, p]) => {
+        const img = p.imagens?.[0] || 'https://via.placeholder.com/300x200?text=Sem+imagem';
+        container.innerHTML += `
+          <div class="produto">
+            <img src="${img}" class="imagem-principal" />
+            <h3 class="titulo">${p.nome}</h3>
+            <p class="preco">${p.preco}</p>
+            <button class="btn-carrinho" onclick="adicionarAoCarrinho('${id}', '${p.nome}', '${p.preco}')">
+              <img src="https://cdn-icons-png.flaticon.com/512/263/263142.png" style="width:20px; vertical-align:middle; margin-right:6px;" />
+              Adicionar ao Carrinho
+            </button>
+            ${modoAdmin ? `
+              <div class="admin-btns">
+                <button class="btn-editar" onclick="editarProduto('${id}')">Editar</button>
+                <button class="btn-apagar" onclick="apagarProduto('${id}')">Apagar</button>
+              </div>` : ''}
+          </div>`;
+      });
+    }
+
+    window.editarProduto = (id) => {
+      const produto = produtosCache[id];
+      const novoNome = prompt("Novo nome:", produto.nome);
+      const novoPreco = prompt("Novo preço:", produto.preco);
+      const novaImagem = prompt("Nova imagem (URL):", produto.imagens?.[0] || '');
+      update(ref(db, 'produtos/' + id), {
+        nome: novoNome,
+        preco: novoPreco,
+        imagens: [novaImagem]
+      });
+    };
+
+    window.apagarProduto = (id) => {
+      if (confirm("Deseja apagar este produto?")) {
+        remove(ref(db, 'produtos/' + id));
+      }
+    };
+
+    onValue(produtosRef, (snapshot) => {
+      carregarProdutos(snapshot.val());
+    });
+
+    atualizarCarrinhoVisual();
+    atualizarLinkWhatsapp();
+  </script>
+</body>
+</html>
